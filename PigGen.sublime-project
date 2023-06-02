@@ -5,7 +5,7 @@
 			"path": ".",
 		},
 		{
-			"path": "C:\\gamedev\\projects\\PigParts\\lib\\include\\gylib",
+			"path": "..\\gylib",
 		}
 	],
 	"settings":
