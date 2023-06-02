@@ -11,6 +11,11 @@ Description:
 // +--------------------------------------------------------------+
 void DebugOutputFromPigGen(u8 flags, const char* filePath, u32 lineNumber, const char* funcName, DbgLevel_t dbgLevel, bool newLine, const char* message)
 {
+	UNUSED(flags);
+	UNUSED(filePath);
+	UNUSED(lineNumber);
+	UNUSED(funcName);
+	UNUSED(dbgLevel);
 	//NOTE: we use these special characters for easy encoding of style info when rendering text using our font flowing stuff.
 	//      But windows will interpret them specially so we replace them with normal characters
 	MyStr_t tempMessage = NewStringInArenaNt(&pig->stdHeap, message);

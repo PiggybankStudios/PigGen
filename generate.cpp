@@ -21,7 +21,7 @@ MyStr_t PigGenGenerateFileComment(MemArena_t* memArena, MyStr_t sourceCodeFilePa
 // +--------------------------------------------------------------+
 // |                     Serializable Struct                      |
 // +--------------------------------------------------------------+
-MyStr_t PigGenGenerateSerializableStructCode(MemArena_t* memArena, SerializableStruct_t* serializable, u64* numBytesOut = nullptr)
+MyStr_t PigGenGenerateSerializableStructCode(MemArena_t* memArena, SerializableStruct_t* serializable)
 {
 	NotNull(serializable);
 	StringBuilder_t builder;

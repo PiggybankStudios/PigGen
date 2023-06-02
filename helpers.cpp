@@ -181,7 +181,6 @@ void DumpProcessLog(const ProcessLog_t* log, const char* headerAndFooterStr = nu
 	const StringFifoLine_t* logLine = log->fifo.firstLine;
 	while (logLine != nullptr)
 	{
-		u64 newMetaStructSize = 0;
 		MyStr_t text = GetFifoLineText(logLine);
 		const ProcessLogLine_t* logLineMeta = GetFifoLineMetaStruct(logLine, ProcessLogLine_t);
 		if (logLineMeta->dbgLevel >= minLevel) { PrintLineAt(logLineMeta->dbgLevel, "%.*s", text.length, text.chars); }

@@ -87,7 +87,8 @@ void ShowHelpHint()
 // +--------------------------------------------------------------+
 // |                       Main Entry Point                       |
 // +--------------------------------------------------------------+
-#if 1
+#define USE_WINMAIN true
+#if USE_WINMAIN
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 #define USED_WIN_MAIN_ENTRY_POINT 1
 #else
@@ -95,6 +96,11 @@ int main(int argc, char* argv[])
 #define USED_WIN_MAIN_ENTRY_POINT 0
 #endif
 {
+	#if USE_WINMAIN
+	UNUSED(hPrevInstance);
+	UNUSED(hInstance);
+	#endif
+	
 	PigGenState_t pigGenState;
 	ClearStruct(pigGenState);
 	pig = &pigGenState;
@@ -175,8 +181,8 @@ int main(int argc, char* argv[])
 			void* stackArenaPntr = malloc(stackArenaSize);
 			MemArena_t stackArena = {};
 			InitMemArena_MarkedStack(&stackArena, stackArenaSize, stackArenaPntr, 4);
-			void* alloc1 = AllocArray(&stackArena, char, 128);
-			void* alloc2 = AllocArray(&stackArena, char, 500);
+			void* alloc1 = AllocArray(&stackArena, char, 128); UNUSED(alloc1);
+			void* alloc2 = AllocArray(&stackArena, char, 500); UNUSED(alloc2);
 			void* alloc3 = AllocArray(&stackArena, char, 128);
 			GrowMemToken_t growthToken = {};
 			u64 growthSpace = GrowMemQuery(&stackArena, alloc3, 128, &growthToken);
@@ -553,6 +559,6 @@ void GyLibAssertFailure(const char* filePath, int lineNumber, const char* funcNa
 	}
 	
 	if (IsDebuggerPresent() != 0) { MyBreak(); }
-	exit(EXIT_CODE_ASSERTION_FAILED);
 	insideAssertFailure = false;
+	exit(EXIT_CODE_ASSERTION_FAILED);
 }

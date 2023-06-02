@@ -1280,7 +1280,7 @@
 			"MyStr_t GetOutputFilePath(MyStr_t fileName, MemArena_t* memArena)",
 			"MyStr_t NewStr(u64 length, char* pntr)",
 			"MyStr_t PigGenGenerateAllSerializableStructsCode(MemArena_t* memArena, VarArray_t* allSerializableStructs)",
-			"MyStr_t PigGenGenerateSerializableStructCode(MemArena_t* memArena, SerializableStruct_t* serializable, u64* numBytesOut = nullptr)",
+			"MyStr_t PigGenGenerateSerializableStructCode(MemArena_t* memArena, SerializableStruct_t* serializable)",
 			"MyStr_t PrintInArenaStr(MemArena_t* arena, const char* formatString, ...)",
 			"MyStr_t StrReplace(MyStr_t str, MyStr_t target, MyStr_t replacement, MemArena_t* memArena)",
 			"MyStr_t StrSplice(MyStr_t target, u64 startIndex, u64 endIndex, MyStr_t replacement, MemArena_t* memArena)",
