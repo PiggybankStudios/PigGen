@@ -1,5 +1,5 @@
 /*
-File:   piggen_examples.h
+File:   examples.h
 Author: Taylor Robbins
 Date:   05\09\2023
 Description:
@@ -7,8 +7,8 @@ Description:
 	** also serve as some documentation of the format
 */
 
-#ifndef _PIGGEN_EXAMPLES_H
-#define _PIGGEN_EXAMPLES_H
+#ifndef _EXAMPLES_H
+#define _EXAMPLES_H
 
 #if PIGGEN
 Serializable: ItemStack_t
@@ -28,4 +28,4 @@ Serializable: AnotherStruct_t
 #include "piggen_examples_h_0.h"
 #endif
 
-#endif //  _PIGGEN_EXAMPLES_H
+#endif //  _EXAMPLES_H

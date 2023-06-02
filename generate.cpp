@@ -1,9 +1,9 @@
 /*
-File:   piggen_generate.cpp
+File:   generate.cpp
 Author: Taylor Robbins
 Date:   05\26\2023
 Description: 
-	** Holds functions that generate C code from information that has been parsed in piggen_parse.cpp
+	** Holds functions that generate C code from information that has been parsed in parse.cpp
 */
 
 MyStr_t PigGenGenerateFileComment(MemArena_t* memArena, MyStr_t sourceCodeFilePath)

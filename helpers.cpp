@@ -1,9 +1,9 @@
 /*
-File:   piggen_helpers.cpp
+File:   helpers.cpp
 Author: Taylor Robbins
 Date:   05\09\2023
 Description: 
-	** Holds functions that we need in piggen_main.cpp
+	** Holds functions that we need in main.cpp
 */
 
 void ProcessProgramArguments(int argc, char* argv[])

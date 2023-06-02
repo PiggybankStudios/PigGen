@@ -1,5 +1,5 @@
 /*
-File:   piggen_main.cpp
+File:   main.cpp
 Author: Taylor Robbins
 Date:   05\09\2023
 Description: 
@@ -37,11 +37,11 @@ Description:
 // +--------------------------------------------------------------+
 // |                         Header Files                         |
 // +--------------------------------------------------------------+
-#include "piggen_version.h"
+#include "version.h"
 
-#include "piggen_parse.h"
+#include "parse.h"
 
-#include "piggen_main.h"
+#include "main.h"
 
 // +--------------------------------------------------------------+
 // |                           Globals                            |
@@ -53,11 +53,11 @@ MemArena_t* mainHeap = nullptr;
 // +--------------------------------------------------------------+
 // |                         Source Files                         |
 // +--------------------------------------------------------------+
-#include "piggen_debug.cpp"
-#include "piggen_files.cpp"
-#include "piggen_generate.cpp"
-#include "piggen_parse.cpp"
-#include "piggen_helpers.cpp"
+#include "debug.cpp"
+#include "files.cpp"
+#include "generate.cpp"
+#include "parse.cpp"
+#include "helpers.cpp"
 
 // +--------------------------------------------------------------+
 // |                             Help                             |
@@ -481,7 +481,7 @@ int main(int argc, char* argv[])
 	}
 	
 	//TODO: Re-enable me once we fix the problems!
-	#if 1
+	#if 0
 	if (genFilesWithPlaceholders.length > 0)
 	{
 		MyStr_t allSerializableStructsCode = PigGenGenerateAllSerializableStructsCode(mainHeap, &allSerializableStructs);

@@ -1,11 +1,11 @@
 /*
-File:   piggen_main.h
+File:   main.h
 Author: Taylor Robbins
 Date:   05\09\2023
 */
 
-#ifndef _PIGGEN_MAIN_H
-#define _PIGGEN_MAIN_H
+#ifndef _MAIN_H
+#define _MAIN_H
 
 #define PIGGEN_TEMP_ARENA_SIZE       Kilobytes(512)
 #define PIGGEN_TEMP_ARENA_MAX_MARKS  256
@@ -101,4 +101,4 @@ struct PigGenState_t
 	MyStr_t outputDirectory;
 };
 
-#endif //  _PIGGEN_MAIN_H
+#endif //  _MAIN_H

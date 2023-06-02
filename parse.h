@@ -1,11 +1,11 @@
 /*
-File:   piggen_parse.h
+File:   parse.h
 Author: Taylor Robbins
 Date:   05\11\2023
 */
 
-#ifndef _PIGGEN_PARSE_H
-#define _PIGGEN_PARSE_H
+#ifndef _PARSE_H
+#define _PARSE_H
 
 enum PigGenParseError_t
 {
@@ -119,4 +119,4 @@ SerializableStructMember_t* FindSerializableMemberByName(SerializableStruct_t* s
 	return nullptr;
 }
 
-#endif //  _PIGGEN_PARSE_H
+#endif //  _PARSE_H
