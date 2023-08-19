@@ -10,6 +10,9 @@ Date:   05\09\2023
 #define PIGGEN_TEMP_ARENA_SIZE       Kilobytes(512)
 #define PIGGEN_TEMP_ARENA_MAX_MARKS  256
 
+#define PIGGEN_SCRATCH_MAX_SIZE      Gigabytes(1)
+#define PIGGEN_SCRATCH_MAX_NUM_MARKS 128
+
 #define PIGGEN_NEW_LINE  "\r\n"
 
 #define EXIT_CODE_STARTUP_FAILURE  1

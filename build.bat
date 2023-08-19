@@ -3,7 +3,7 @@
 set ExeBaseName=PigGen
 set ExeName=%ExeBaseName%.exe
 
-set DebugBuild=1
+set DebugBuild=0
 set AssertionsEnabled=1
 
 set CopyToBuildDirectory=1

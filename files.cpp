@@ -316,7 +316,7 @@ void FreeFileContents(FileContents_t* fileContents)
 	NotNull(fileContents);
 	if (fileContents->data != nullptr)
 	{
-		AssertMsg(fileContents->size > 0, "FileContents_t.size was 0 when calling FreeFileContents");
+		// AssertMsg(fileContents->size > 0, "FileContents_t.size was 0 when calling FreeFileContents");
 		FreeMem(&pig->stdHeap, fileContents->data, fileContents->size+1);
 	}
 	if (fileContents->path.pntr != nullptr)

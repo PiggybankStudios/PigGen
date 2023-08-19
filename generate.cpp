@@ -103,12 +103,14 @@ MyStr_t PigGenGenerateSerializableStructCode(MemArena_t* memArena, SerializableS
 	StringBuilderAppendLine      (&builder, "");
 	StringBuilderAppendPrintLine (&builder, "SlzMemberType_t GetSerializableMemberType(const %.*s* structPntr, u64 memberIndex)", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendLine      (&builder, "{");
+	StringBuilderAppendLine      (&builder, "\tUNUSED(structPntr);");
 	StringBuilderAppendPrintLine (&builder, "\tAssert(memberIndex < %.*s_NumMembers);", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendPrintLine (&builder, "\treturn SlzTypes_%.*s[memberIndex];", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendLine      (&builder, "}");
 	StringBuilderAppendLine      (&builder, "");
 	StringBuilderAppendPrintLine (&builder, "const char* GetSerializableMemberName(const %.*s* structPntr, u64 memberIndex)", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendLine      (&builder, "{");
+	StringBuilderAppendLine      (&builder, "\tUNUSED(structPntr);");
 	StringBuilderAppendPrintLine (&builder, "\tAssert(memberIndex < %.*s_NumMembers);", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendPrintLine (&builder, "\treturn SlzNames_%.*s[memberIndex];", serializable->name.length, serializable->name.chars);
 	StringBuilderAppendLine      (&builder, "}");

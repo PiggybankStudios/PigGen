@@ -15,6 +15,7 @@ Description:
 #endif
 #define GYLIB_ASSERTIONS_ENABLED ASSERTIONS_ENABLED
 #define GYLIB_USE_ASSERT_FAILURE_FUNC
+#define GYLIB_SCRATCH_ARENA_AVAILABLE
 #include "gylib/gy_defines_check.h"
 #include "gylib/gy_basic_macros.h"
 
@@ -47,6 +48,7 @@ Description:
 // |                           Globals                            |
 // +--------------------------------------------------------------+
 #include "gylib/gy_temp_memory.cpp"
+#include "gylib/gy_scratch_arenas.cpp"
 PigGenState_t* pig = nullptr;
 MemArena_t* mainHeap = nullptr;
 
@@ -100,6 +102,8 @@ int main(int argc, char* argv[])
 	UNUSED(hPrevInstance);
 	UNUSED(hInstance);
 	#endif
+	
+	InitThreadLocalScratchArenasVirtual(PIGGEN_SCRATCH_MAX_SIZE, PIGGEN_SCRATCH_MAX_NUM_MARKS);
 	
 	PigGenState_t pigGenState;
 	ClearStruct(pigGenState);
@@ -435,7 +439,7 @@ int main(int argc, char* argv[])
 							if (pig->verboseEnabled) { PrintLine_I("Generating code file: \"%.*s\"", outputFilePath.length, outputFilePath.chars); }
 							
 							ProcessLog_t parseLog;
-							CreateProcessLog(&parseLog, Kilobytes(32), mainHeap, mainHeap, TempArena);
+							CreateProcessLog(&parseLog, Kilobytes(32), mainHeap, TempArena);
 							SetProcessLogFilePath(&parseLog, fileToProcess->path);
 							
 							bool hadPlaceholders = false;
