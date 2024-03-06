@@ -525,9 +525,11 @@ int main(int argc, char* argv[])
 			if (ReadFileContents(genFile->path, &fileContents))
 			{
 				MyStr_t fileContentsStr = NewStr(fileContents.length, fileContents.chars);
-				MyStr_t newFileContents = StrReplace(fileContentsStr, NewStr(ALL_SERIALIZABLE_STRUCTS_PLACEHOLDER_STRING), allSerializableStructsCode, mainHeap);
-				newFileContents = StrReplace(newFileContents, NewStr(FILL_GLOBAL_FUNC_TABLE_IMPLEMENTATION_PLACEHOLDER_STRING), fillGlobalFuncTableImplementationCode, mainHeap);
-				newFileContents = StrReplace(newFileContents, NewStr(FUNCTION_TABLE_COUNT_PLACEHOLDER_STRING), funcTableCountCode, mainHeap);
+				MyStrPair_t replacements[3];
+				replacements[0] = NewStrPair(ALL_SERIALIZABLE_STRUCTS_PLACEHOLDER_STRING, allSerializableStructsCode);
+				replacements[1] = NewStrPair(FILL_GLOBAL_FUNC_TABLE_IMPLEMENTATION_PLACEHOLDER_STRING, fillGlobalFuncTableImplementationCode);
+				replacements[2] = NewStrPair(FUNCTION_TABLE_COUNT_PLACEHOLDER_STRING, funcTableCountCode);
+				MyStr_t newFileContents = StrReplaceMultiple(fileContentsStr, ArrayCount(replacements), &replacements[0], mainHeap);
 				// PrintLine_D("newFileContents:\n%.*s", newFileContents.length, newFileContents.chars);
 				bool writeSuccess = WriteEntireFile(genFile->path, newFileContents.chars, newFileContents.length);
 				Assert(writeSuccess);
