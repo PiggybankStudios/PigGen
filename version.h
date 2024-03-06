@@ -11,9 +11,10 @@ Description:
 #define _VERSION_H
 
 #define PIGGEN_VERSION_MAJOR 0
-#define PIGGEN_VERSION_MINOR 1
+#define PIGGEN_VERSION_MINOR 2
 
 //NOTE: Auto-incremented by a python script before each build
-#define PIGGEN_VERSION_BUILD 328
+#define PIGGEN_VERSION_BUILD 5
+//v0.1: 348 builds
 
 #endif //  _VERSION_H

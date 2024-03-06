@@ -7,16 +7,18 @@ Description:
 */
 
 #define ALL_SERIALIZABLE_STRUCTS_PLACEHOLDER_STRING "// {{{{AllSerializableStructs}}}}"
+#define FILL_GLOBAL_FUNC_TABLE_IMPLEMENTATION_PLACEHOLDER_STRING "// {{{{FillGlobalFuncTableImplementation}}}}"
+#define FUNCTION_TABLE_COUNT_PLACEHOLDER_STRING "// {{{{FuncTableCount}}}}"
 
 // +--------------------------------------------------------------+
 // |                            Parse                             |
 // +--------------------------------------------------------------+
 //Returns MyStr_Empty on failure
-bool TryPigGenerate(MyStr_t regionContents, OpenFile_t* outputFile, VarArray_t* allSerializableStructs, bool* hasPlaceholdersOut, ProcessLog_t* log, u64 baseLineIndex)
+bool TryPigGenerate(MyStr_t regionContents, OpenFile_t* outputFile, GenerationLists_t* lists, bool* hasPlaceholdersOut, ProcessLog_t* log, u64 baseLineIndex)
 {
 	NotNullStr(&regionContents);
 	NotNull(outputFile);
-	NotNull(allSerializableStructs);
+	NotNull(lists);
 	NotNull(hasPlaceholdersOut);
 	NotNull(log);
 	
@@ -166,7 +168,7 @@ bool TryPigGenerate(MyStr_t regionContents, OpenFile_t* outputFile, VarArray_t* 
 			WriteToFile(outputFile, structCode.length, structCode.chars);
 			TempPopMark();
 			
-			SerializableStruct_t* addedStruct = VarArrayAdd(allSerializableStructs, SerializableStruct_t);
+			SerializableStruct_t* addedStruct = VarArrayAdd(&lists->allSerializableStructs, SerializableStruct_t);
 			NotNull(addedStruct);
 			MyMemCopy(addedStruct, &currentStruct, sizeof(SerializableStruct_t));
 			ClearStruct(currentStruct);
@@ -178,6 +180,23 @@ bool TryPigGenerate(MyStr_t regionContents, OpenFile_t* outputFile, VarArray_t* 
 			if (StrEqualsIgnoreCase(token.value, "AllSerializableStructs"))
 			{
 				MyStr_t placeholderString = TempPrintStr(PIGGEN_NEW_LINE PIGGEN_NEW_LINE "%s" PIGGEN_NEW_LINE PIGGEN_NEW_LINE, ALL_SERIALIZABLE_STRUCTS_PLACEHOLDER_STRING);
+				WriteToFile(outputFile, placeholderString.length, placeholderString.chars);
+				*hasPlaceholdersOut = true;
+			}
+			else if (StrEqualsIgnoreCase(token.value, "FillGlobalFuncTable_Declaration"))
+			{
+				MyStr_t declarationString = NewStr("void FillGlobalFuncTable();" PIGGEN_NEW_LINE PIGGEN_NEW_LINE);
+				WriteToFile(outputFile, declarationString.length, declarationString.chars);
+			}
+			else if (StrEqualsIgnoreCase(token.value, "FillGlobalFuncTable_Implementation"))
+			{
+				MyStr_t placeholderString = TempPrintStr(PIGGEN_NEW_LINE PIGGEN_NEW_LINE "%s" PIGGEN_NEW_LINE PIGGEN_NEW_LINE, FILL_GLOBAL_FUNC_TABLE_IMPLEMENTATION_PLACEHOLDER_STRING);
+				WriteToFile(outputFile, placeholderString.length, placeholderString.chars);
+				*hasPlaceholdersOut = true;
+			}
+			else if (StrEqualsIgnoreCase(token.value, "FuncTableCount"))
+			{
+				MyStr_t placeholderString = TempPrintStr(PIGGEN_NEW_LINE PIGGEN_NEW_LINE "%s" PIGGEN_NEW_LINE PIGGEN_NEW_LINE, FUNCTION_TABLE_COUNT_PLACEHOLDER_STRING);
 				WriteToFile(outputFile, placeholderString.length, placeholderString.chars);
 				*hasPlaceholdersOut = true;
 			}

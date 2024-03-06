@@ -152,6 +152,58 @@ MyStr_t PigGenGenerateAllSerializableStructsCode(MemArena_t* memArena, VarArray_
 	}
 	StringBuilderAppendLine      (&builder, "\tSlzStruct_NumStructs,");
 	StringBuilderAppendLine      (&builder, "};");
+	StringBuilderAppendLine      (&builder, "");
+	StringBuilderAppendLine      (&builder, "const char* GetSlzStructStr(SlzStruct_t slzStruct)");
+	StringBuilderAppendLine      (&builder, "{");
+	StringBuilderAppendLine      (&builder, "\tswitch (slzStruct)");
+	StringBuilderAppendLine      (&builder, "\t{");
+	VarArrayLoop(allSerializableStructs, sIndex)
+	{
+		VarArrayLoopGet(SerializableStruct_t, serializableStruct, allSerializableStructs, sIndex);
+		StringBuilderAppendPrintLine(&builder, "\t\tcase SlzStruct_%.*s: return \"%.*s\";", StrPrint(serializableStruct->name), StrPrint(serializableStruct->name));
+	}
+	StringBuilderAppendLine      (&builder, "\t\tdefault: return \"Unknown\";");
+	StringBuilderAppendLine      (&builder, "\t}");
+	StringBuilderAppendLine      (&builder, "}");
+	
+	return TakeString(&builder);
+}
+
+MyStr_t PigGenGenerateFillGlobalFuncTableImplementationCode(MemArena_t* memArena, VarArray_t* registeredFunctions)
+{
+	NotNull(registeredFunctions);
+	StringBuilder_t builder;
+	NewStringBuilder(&builder, memArena);
+	builder.newLineStyle = PIGGEN_NEW_LINE;
+	
+	StringBuilderAppendLine(&builder, "void FillGlobalFuncTable()");
+	StringBuilderAppendLine(&builder, "{");
+	if (registeredFunctions->length > 0)
+	{
+		VarArrayLoop(registeredFunctions, fIndex)
+		{
+			VarArrayLoopGet(RegisteredFunc_t, registeredFunc, registeredFunctions, fIndex);
+			StringBuilderAppendPrintLine(&builder, "\tGlobalFuncTable[%llu] = %.*s;", fIndex, StrPrint(registeredFunc->funcName));
+		}
+	}
+	else
+	{
+		StringBuilderAppendLine(&builder, "\t// No registered functions");
+		StringBuilderAppendLine(&builder, "\tGlobalFuncTable[0] = nullptr;");
+	}
+	StringBuilderAppendLine(&builder, "}");
+	
+	return TakeString(&builder);
+}
+
+MyStr_t PigGenGenerateFuncTableCountCode(MemArena_t* memArena, VarArray_t* registeredFunctions)
+{
+	NotNull(registeredFunctions);
+	StringBuilder_t builder;
+	NewStringBuilder(&builder, memArena);
+	builder.newLineStyle = PIGGEN_NEW_LINE;
+	
+	StringBuilderAppendPrintLine(&builder, "#define FuncTable_NumFunctions %llu", MaxU64(1, registeredFunctions->length));
 	
 	return TakeString(&builder);
 }

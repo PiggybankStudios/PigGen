@@ -356,8 +356,8 @@ int main(int argc, char* argv[])
 	
 	VarArray_t genFilesWithPlaceholders;
 	CreateVarArray(&genFilesWithPlaceholders, mainHeap, sizeof(FileToProcess_t));
-	VarArray_t allSerializableStructs;
-	CreateVarArray(&allSerializableStructs, mainHeap, sizeof(SerializableStruct_t));
+	GenerationLists_t lists;
+	InitGenerationLists(mainHeap, &lists);
 	
 	// Loop over and process each file
 	u64 numPigGenRegions = 0;
@@ -397,6 +397,27 @@ int main(int argc, char* argv[])
 						foundElseLine = false;
 						pigGenRegionStartIndex = endOfLineIndex;
 						pigGenRegionStartLineIndex = lineParser.lineIndex;
+					}
+					else if (StrStartsWith(line, "PIGGEN_RegisterFunc"))
+					{
+						u64 openParensIndex = 0;
+						bool foundOpenParens = FindNextCharInStr(line, 0, "(", &openParensIndex);
+						Assert(foundOpenParens);
+						u64 closeParensIndex = 0;
+						bool foundCloseParens = FindNextCharInStr(line, openParensIndex+1, ")", &closeParensIndex);
+						if (foundCloseParens && closeParensIndex > openParensIndex)
+						{
+							MyStr_t funcName = StrSubstring(&line, openParensIndex+1, closeParensIndex);
+							RegisteredFunc_t* newRegisteredFunc = VarArrayAdd(&lists.registeredFunctions, RegisteredFunc_t);
+							NotNull(newRegisteredFunc);
+							newRegisteredFunc->allocArena = mainHeap;
+							newRegisteredFunc->funcName = AllocString(newRegisteredFunc->allocArena, &funcName);
+							if (pig->verboseEnabled) { PrintLine_D("RegisterFunc on line %llu: %.*s", lineParser.lineIndex, StrPrint(funcName)); }
+						}
+						else
+						{
+							if (pig->verboseEnabled) { PrintLine_W("Malformed RegisterFunc on line %llu: %.*s", lineParser.lineIndex, StrPrint(line)); }
+						}
 					}
 				}
 				else
@@ -443,12 +464,12 @@ int main(int argc, char* argv[])
 							SetProcessLogFilePath(&parseLog, fileToProcess->path);
 							
 							bool hadPlaceholders = false;
-							bool parseSuccess = TryPigGenerate(pigGenInput, &outputFile, &allSerializableStructs, &hadPlaceholders, &parseLog, pigGenRegionStartLineIndex+1);
+							bool parseSuccess = TryPigGenerate(pigGenInput, &outputFile, &lists, &hadPlaceholders, &parseLog, pigGenRegionStartLineIndex+1);
 							if (pig->verboseEnabled) { PrintLineAt(parseSuccess ? DbgLevel_Info : DbgLevel_Error, "Region parse%s!", parseSuccess ? "d Successfully" : " Failure"); }
 							if (parseLog.hadErrors || parseLog.hadWarnings) { DumpProcessLog(&parseLog, "PigGen Parse Log", DbgLevel_Warning); }
 							FreeProcessLog(&parseLog);
 							
-							MyStr_t includeCode = TempPrintStr("%s#include \"%.*s\"" PIGGEN_NEW_LINE, (foundElseLine ? "" : PIGGEN_NEW_LINE "#else"), outputFileName.length, outputFileName.chars);
+							MyStr_t includeCode = TempPrintStr("%s#include \"%.*s\"" PIGGEN_NEW_LINE, (foundElseLine ? "" : "#else" PIGGEN_NEW_LINE), outputFileName.length, outputFileName.chars);
 							
 							u64 replaceRegionStart = (foundElseLine ? elseLineEndIndex : startOfLineIndex);
 							u64 replaceRegionSize = (foundElseLine ? (startOfLineIndex - elseLineEndIndex) : 0);
@@ -490,21 +511,24 @@ int main(int argc, char* argv[])
 		}
 	}
 	
-	//TODO: Re-enable me once we fix the problems!
-	#if 0
 	if (genFilesWithPlaceholders.length > 0)
 	{
-		MyStr_t allSerializableStructsCode = PigGenGenerateAllSerializableStructsCode(mainHeap, &allSerializableStructs);
+		MyStr_t allSerializableStructsCode = PigGenGenerateAllSerializableStructsCode(mainHeap, &lists.allSerializableStructs);
+		MyStr_t fillGlobalFuncTableImplementationCode = PigGenGenerateFillGlobalFuncTableImplementationCode(mainHeap, &lists.registeredFunctions);
+		MyStr_t funcTableCountCode = PigGenGenerateFuncTableCountCode(mainHeap, &lists.registeredFunctions);
 		
 		VarArrayLoop(&genFilesWithPlaceholders, fIndex)
 		{
 			VarArrayLoopGet(FileToProcess_t, genFile, &genFilesWithPlaceholders, fIndex);
+			if (pig->verboseEnabled) { PrintLine_D("Revisiting file to fill placeholders: \"%.*s\"", StrPrint(genFile->path)); }
 			FileContents_t fileContents;
 			if (ReadFileContents(genFile->path, &fileContents))
 			{
 				MyStr_t fileContentsStr = NewStr(fileContents.length, fileContents.chars);
 				MyStr_t newFileContents = StrReplace(fileContentsStr, NewStr(ALL_SERIALIZABLE_STRUCTS_PLACEHOLDER_STRING), allSerializableStructsCode, mainHeap);
-				PrintLine_D("newFileContents:\n%.*s", newFileContents.length, newFileContents.chars);
+				newFileContents = StrReplace(newFileContents, NewStr(FILL_GLOBAL_FUNC_TABLE_IMPLEMENTATION_PLACEHOLDER_STRING), fillGlobalFuncTableImplementationCode, mainHeap);
+				newFileContents = StrReplace(newFileContents, NewStr(FUNCTION_TABLE_COUNT_PLACEHOLDER_STRING), funcTableCountCode, mainHeap);
+				// PrintLine_D("newFileContents:\n%.*s", newFileContents.length, newFileContents.chars);
 				bool writeSuccess = WriteEntireFile(genFile->path, newFileContents.chars, newFileContents.length);
 				Assert(writeSuccess);
 				FreeString(mainHeap, &newFileContents);
@@ -514,16 +538,10 @@ int main(int argc, char* argv[])
 		
 		FreeString(mainHeap, &allSerializableStructsCode);
 	}
-	#endif
 	
 	// Free
 	#if 0 //This isn't super necassary since we're shutting down. Maybe we want to do this work for some reason though? Might help us catch memory leaks?
-	VarArrayLoop(&allSerializableStructs, sIndex)
-	{
-		VarArrayLoopGet(SerializableStruct_t, serializableStruct, &allSerializableStructs, sIndex);
-		FreeSerializableStruct(serializableStruct);
-	}
-	FreeVarArray(&allSerializableStructs);
+	FreeGenerationLists(&lists);
 	#endif
 	
 	// Shutdown

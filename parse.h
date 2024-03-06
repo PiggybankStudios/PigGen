@@ -50,6 +50,18 @@ struct SerializableStruct_t
 	MyStr_t name;
 	VarArray_t members; //SerializableStructMember_t
 };
+struct RegisteredFunc_t
+{
+	MemArena_t* allocArena;
+	MyStr_t funcName;
+};
+
+struct GenerationLists_t
+{
+	MemArena_t* allocArena;
+	VarArray_t allSerializableStructs; //SerializableStruct_t
+	VarArray_t registeredFunctions; //RegisteredFunc_t
+};
 
 // +--------------------------------------------------------------+
 // |                    New/Free Serializable                     |
@@ -117,6 +129,36 @@ SerializableStructMember_t* FindSerializableMemberByName(SerializableStruct_t* s
 		if (StrEquals(member->name, name)) { return member; }
 	}
 	return nullptr;
+}
+
+// +--------------------------------------------------------------+
+// |                  New/Free Generation Lists                   |
+// +--------------------------------------------------------------+
+void FreeGenerationLists(GenerationLists_t* lists)
+{
+	NotNull(lists);
+	VarArrayLoop(&lists->allSerializableStructs, sIndex)
+	{
+		VarArrayLoopGet(SerializableStruct_t, serializableStruct, &lists->allSerializableStructs, sIndex);
+		FreeSerializableStruct(serializableStruct);
+	}
+	FreeVarArray(&lists->allSerializableStructs);
+	VarArrayLoop(&lists->registeredFunctions, fIndex)
+	{
+		VarArrayLoopGet(RegisteredFunc_t, registeredFunc, &lists->registeredFunctions, fIndex);
+		FreeString(registeredFunc->allocArena, &registeredFunc->funcName);
+	}
+	FreeVarArray(&lists->registeredFunctions);
+	ClearPointer(lists);
+}
+
+void InitGenerationLists(MemArena_t* memArena, GenerationLists_t* listsOut)
+{
+	NotNull2(memArena, listsOut);
+	ClearPointer(listsOut);
+	listsOut->allocArena = memArena;
+	CreateVarArray(&listsOut->allSerializableStructs, memArena, sizeof(SerializableStruct_t));
+	CreateVarArray(&listsOut->registeredFunctions, memArena, sizeof(RegisteredFunc_t));
 }
 
 #endif //  _PARSE_H
