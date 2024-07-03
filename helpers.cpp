@@ -216,24 +216,6 @@ MyStr_t GetOutputFilePath(MyStr_t fileName, MemArena_t* memArena)
 	);
 }
 
-PerfTime_t GetPerfTime()
-{
-	PerfTime_t result = {};
-	BOOL queryResult = QueryPerformanceCounter(&result.perfCount);
-	Assert_(queryResult != 0);
-	result.cycleCount = __rdtsc();
-	return result;
-}
-
-// NOTE: Returns value in r64 milliseconds
-r64 GetPerfTimeDiff(const PerfTime_t* tStart, const PerfTime_t* tEnd)
-{
-	NotNull_(tStart);
-	NotNull_(tEnd);
-	r64 resultSecs = ((r64)(tEnd->perfCount.QuadPart - tStart->perfCount.QuadPart) / (r64)pig->perfCountFrequency);
-	return resultSecs * 1000.0;
-}
-
 #define FILETIME_SEC_OFFSET  11644473600ULL //11,644,473,600 seconds between Jan 1st 1601 and Jan 1st 1970
 
 u64 GetCurrentTimestamp(bool local, i64* timezoneOffsetOut = nullptr, bool* timezoneDoesDstOut = nullptr, MyStr_t* timezoneNameOut = nullptr)

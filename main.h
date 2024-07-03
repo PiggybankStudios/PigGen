@@ -24,12 +24,6 @@ struct ProgramArguments_t
 	MyStr_t* args;
 };
 
-struct PerfTime_t
-{
-	LARGE_INTEGER perfCount;
-	u64 cycleCount;
-};
-
 struct FileEnumerator_t
 {
 	MyStr_t folderPath;

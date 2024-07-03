@@ -14,7 +14,7 @@ Description:
 #define PIGGEN_VERSION_MINOR 2
 
 //NOTE: Auto-incremented by a python script before each build
-#define PIGGEN_VERSION_BUILD 7
+#define PIGGEN_VERSION_BUILD 26
 //v0.1: 348 builds
 
 #endif //  _VERSION_H
